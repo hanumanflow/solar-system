@@ -1,5 +1,9 @@
 pipeline{
 	agent any
+
+	tools{
+		NodeJS "nodejs-26"
+	}
 	stages{
 		stage("hello-world"){
 			steps{
