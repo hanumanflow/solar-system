@@ -12,7 +12,7 @@ pipeline{
 		}
 		stage("Second stage"){
 			steps{
-				echo "Second stage starting after jenkins upgrading "
+				echo "Second stage starting after jenkins upgrading to letest version."
 				sh """
 				node -v
 				npm -v
