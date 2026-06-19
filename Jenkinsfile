@@ -12,6 +12,7 @@ pipeline{
 		}
 		stage("Second stage"){
 			steps{
+				echo "Second stage starting"
 				sh """
 				node -v
 				npm -v
