@@ -5,7 +5,7 @@ pipeline{
 		nodejs "nodejs-26"
 	}
 	stages{
-		stage("Checkout repo"){
+		stage("Checkout repo,,,"){
 			steps{
 			   checkout scm
 			}
