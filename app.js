@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const app = express();
 const cors = require('cors')
 const serverless = require('serverless-http')
+require('dotenv').config();
+
 
 
 app.use(bodyParser.json());
@@ -16,15 +18,14 @@ app.use(cors())
 mongoose.connect(process.env.MONGO_URI, {
     user: process.env.MONGO_USERNAME,
     pass: process.env.MONGO_PASSWORD,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}, function(err) {
-    if (err) {
-        console.log("error!! " + err)
-    } else {
-      //  console.log("MongoDB Connection Successful")
-    }
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true
+}).then(() => {
+    console.log('MongoDB Connection Successful');
 })
+.catch((err) => {
+    console.log('Error!!', err);
+});
 
 var Schema = mongoose.Schema;
 
@@ -38,7 +39,7 @@ var dataSchema = new Schema({
 });
 var planetModel = mongoose.model('planets', dataSchema);
 
-
+console.log(planetModel.toString());
 
 app.post('/planet',   function(req, res) {
    // console.log("Received Planet ID " + req.body.id)
@@ -46,6 +47,7 @@ app.post('/planet',   function(req, res) {
         id: req.body.id
     }, function(err, planetData) {
         if (err) {
+            console.log("Error ===> "+ err)
             alert("Ooops, We only have 9 planets and a sun. Select a number from 0 - 9")
             res.send("Error in Planet Data")
         } else {
