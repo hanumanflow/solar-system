@@ -17,7 +17,7 @@ pipeline{
 				"""
 			}
 		}
-		stage("Dependencies Scanning"){
+		stage("Dependencies Scanning stage"){
 			parallel {
 				stage("Dependencies Audit"){
 					steps{
