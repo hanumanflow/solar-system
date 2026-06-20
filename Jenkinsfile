@@ -5,17 +5,15 @@ pipeline{
 		nodejs "nodejs-26"
 	}
 	stages{
-		stage("hello-world"){
+		stage("Checkout repo"){
 			steps{
-			   sh "echo 'hello world this is first pipeline updated the webhook added actual IP'"
+			   checkout scm
 			}
 		}
-		stage("Second stage"){
+		stage("list repo"){
 			steps{
-				echo "Second stage starting after jenkins upgrading to letest version."
 				sh """
-				node -v
-				npm -v
+					pwd
 				"""
 			}
 		}
