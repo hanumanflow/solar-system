@@ -10,11 +10,10 @@ pipeline{
 			   checkout scm
 			}
 		}
-		stage("list repo"){
+		stage("Install dependencies"){
 			steps{
 				sh """
-					pwd
-					ls -la
+					npm install --no-audit
 				"""
 			}
 		}
