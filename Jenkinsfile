@@ -2,7 +2,7 @@ pipeline{
 	agent any
 
 	tools{
-		nodejs "nodejs-26"
+		nodejs "nodejs-22"
 	}
 	stages{
 		stage("Checkout repo"){
