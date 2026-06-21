@@ -4,9 +4,13 @@ pipeline{
 	tools{
 		nodejs "nodejs-22"
 	}
+	environment{
+		PROJECT_NAME = "Solar system"
+	}
 	stages{
 		stage("Checkout repo"){
 			steps{
+				echo "${PROJECT_NAME}"
 			   checkout scm
 			}
 		}
