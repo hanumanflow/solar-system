@@ -6,7 +6,7 @@ pipeline{
 	}
 	environment{
 		// PROJECT_NAME = "Solar system"
-		MONGO_URI="mongodb+srv://superuser:SuperPassword@supercluster.d83jj.mongodb.net/superData"
+		MONGO_URI=credentials("mongodb-url")
 		// MONGO_USERNAME="superuser"
 		// MONGO_PASSWORD="SuperPassword"
 
