@@ -4,13 +4,13 @@ pipeline{
 	tools{
 		nodejs "nodejs-22"
 	}
-	// environment{
-	// 	PROJECT_NAME = "Solar system"
-	// 	MONGO_URI=credentials("mongodb-url")
-	// 	MONGO_USERNAME="superuser"
-	// 	MONGO_PASSWORD="SuperPassword"
+	environment{
+		// PROJECT_NAME = "Solar system"
+		MONGO_URI=credentials("mongodb-url")
+		// MONGO_USERNAME="superuser"
+		// MONGO_PASSWORD="SuperPassword"
 
-	// }
+	}
 	stages{
 		stage("Checkout repo"){
 			steps{
@@ -19,6 +19,11 @@ pipeline{
 			}
 		}
 		stage("Install dependencies"){
+
+			options{
+				timestamps()
+			}
+
 			steps{
 				sh """
 					npm install --no-audit
@@ -47,11 +52,16 @@ pipeline{
 			}
 		}
 		stage("Testing stage"){
+
+			options{
+				retry(2)
+			}
+			
 			steps{
 				script{
 					withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials' , usernameVariable: 'MONGO_USERNAME' ,
-														passwordVariable: 'MONGO_PASSWORD') ,
-														 string(credentialsId: 'mongodb-url' , variable: 'MONGO_URI')]){
+														passwordVariable: 'MONGO_PASSWORD')]){
+														// string(credentialsId: 'mongodb-url' , variable: 'MONGO_URI')
 						sh "npm test"
 					}
 					junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)
