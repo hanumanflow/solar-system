@@ -6,6 +6,10 @@ pipeline{
 	}
 	environment{
 		PROJECT_NAME = "Solar system"
+		MONGO_URI="mongodb+srv://superuser:SuperPassword@supercluster.d83jj.mongodb.net/superData"
+		MONGO_USERNAME="superuser"
+		MONGO_PASSWORD="SuperPassword"
+
 	}
 	stages{
 		stage("Checkout repo"){
