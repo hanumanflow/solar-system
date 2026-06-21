@@ -48,9 +48,13 @@ pipeline{
 		}
 		stage("Testing stage"){
 			steps{
+				script{
 					sh "npm test"
 					sh "ls -l"
+					archiveArtifacts "test-results.xml"
+				}
 			}
 		}
+		
 	}
 }
