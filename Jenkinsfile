@@ -51,6 +51,7 @@ pipeline{
 				script{
 					sh "npm test"
 					sh "ls -l"
+					junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)
 					archiveArtifacts "test-results.xml"
 				}
 			}
