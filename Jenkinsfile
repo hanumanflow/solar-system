@@ -5,16 +5,16 @@ pipeline{
 		nodejs "nodejs-22"
 	}
 	environment{
-		PROJECT_NAME = "Solar system"
+		// PROJECT_NAME = "Solar system"
 		MONGO_URI="mongodb+srv://superuser:SuperPassword@supercluster.d83jj.mongodb.net/superData"
-		MONGO_USERNAME="superuser"
-		MONGO_PASSWORD="SuperPassword"
+		// MONGO_USERNAME="superuser"
+		// MONGO_PASSWORD="SuperPassword"
 
 	}
 	stages{
 		stage("Checkout repo"){
 			steps{
-				echo "${PROJECT_NAME}"
+				// echo "${PROJECT_NAME}"
 			   checkout scm
 			}
 		}
@@ -49,8 +49,10 @@ pipeline{
 		stage("Testing stage"){
 			steps{
 				script{
-					sh "npm test"
-					sh "ls -l"
+					withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials' , usernameVariable: 'MONGO_USERNAME' ,
+														passwordVariable: 'MONGO_PASSWORD')]){
+						sh "npm test"
+					}
 					junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)
 					archiveArtifacts "test-results.xml"
 				}
