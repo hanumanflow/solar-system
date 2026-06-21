@@ -38,5 +38,11 @@ pipeline{
 				// }
 			}
 		}
+		stage("Testing stage"){
+			steps{
+					sh "npm test"
+					sh "ls -l"
+			}
+		}
 	}
 }
