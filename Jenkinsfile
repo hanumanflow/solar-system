@@ -4,13 +4,13 @@ pipeline{
 	tools{
 		nodejs "nodejs-22"
 	}
-	environment{
-		// PROJECT_NAME = "Solar system"
-		MONGO_URI=credentials("mongodb-url")
-		// MONGO_USERNAME="superuser"
-		// MONGO_PASSWORD="SuperPassword"
+	// environment{
+	// 	PROJECT_NAME = "Solar system"
+	// 	MONGO_URI=credentials("mongodb-url")
+	// 	MONGO_USERNAME="superuser"
+	// 	MONGO_PASSWORD="SuperPassword"
 
-	}
+	// }
 	stages{
 		stage("Checkout repo"){
 			steps{
@@ -56,7 +56,7 @@ pipeline{
 			options{
 				retry(2)
 			}
-			
+
 			steps{
 				script{
 					withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials' , usernameVariable: 'MONGO_USERNAME' ,
