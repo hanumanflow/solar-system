@@ -6,7 +6,7 @@ pipeline{
 	}
 	environment{
 		// PROJECT_NAME = "Solar system"
-		MONGO_URI=credentials("mongodb-url")
+		// MONGO_URI=credentials("mongodb-url")
 		// MONGO_USERNAME="superuser"
 		// MONGO_PASSWORD="SuperPassword"
 
@@ -50,7 +50,8 @@ pipeline{
 			steps{
 				script{
 					withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials' , usernameVariable: 'MONGO_USERNAME' ,
-														passwordVariable: 'MONGO_PASSWORD')]){
+														passwordVariable: 'MONGO_PASSWORD') ,
+														 string(credentialsId: 'mongodb-url' , variable: 'MONGO_URI')]){
 						sh "npm test"
 					}
 					junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)
