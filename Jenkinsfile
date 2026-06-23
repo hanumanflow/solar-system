@@ -79,7 +79,7 @@ pipeline{
 					
 					archiveArtifacts "coverage/lcov-report/index.html"
 					publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
-					reportFiles: 'index.html', reportName: 'Code coverage report', reportTitles: 'true', useWrapperFileDirectly: true])
+					reportFiles: 'index.html', reportName: 'Code-coverage-report.html', reportTitles: '', useWrapperFileDirectly: true])
 
 				}
 			}
