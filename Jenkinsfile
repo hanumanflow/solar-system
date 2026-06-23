@@ -9,7 +9,7 @@ pipeline{
 		MONGO_USERNAME = credentials("mongo_username");
 		MONGO_PASSWORD = credentials("mongo_password");
 		SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
-		SONAR_TOKEN = '0b85227e58a1466dbe9022b06f4d6441e2193b7d'
+		SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
 	}
 	stages{
 		stage("Checkout repo"){
@@ -74,8 +74,8 @@ pipeline{
                			 -Dsonar.projectKey=hanumanflow_solar-system \
                			 -Dsonar.organization=hanumanflow \
                 		 -Dsonar.sources=. \
-                		 -Dsonar.host.url=https://sonarcloud.io
-						 -Dsonar.login=0b85227e58a1466dbe9022b06f4d6441e2193b7d
+                		 -Dsonar.host.url=https://sonarcloud.io \
+						 -Dsonar.login=5463f33c30a324dc43ec7a3d4db9a533eb418eb1
 				"""
 			}
 		}
