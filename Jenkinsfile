@@ -6,7 +6,9 @@ pipeline{
 	}
 	environment{
 		MONGO_URI=credentials("mongodb-url")
-		MONGO_DETAILS = credentials("mongo-db-credentials");
+		MONGO_DETAILS_USR = credentials("mongo-db-credentials");
+		MONGO_DETAILS_PSW = credentials("mongo-db-credentials");
+
 
 
 		// MONGO_USERNAME="superuser"
@@ -17,7 +19,10 @@ pipeline{
 		stage("Checkout repo"){
 			steps{
 				// echo "${PROJECT_NAME}"
-				echo "${MONGO_DETAILS}"
+				sh """
+				echo 'username - ${MONGO_DETAILS_USR}'
+				echo 'password - ${MONGO_DETAILS_PSW}'
+				"""
 			   checkout scm
 			}
 		}
