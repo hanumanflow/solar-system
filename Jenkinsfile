@@ -8,6 +8,7 @@ pipeline{
 		MONGO_URI=credentials("mongodb-url")
 		MONGO_USERNAME = credentials("mongo_username");
 		MONGO_PASSWORD = credentials("mongo_password");
+		SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 	}
 	stages{
 		stage("Checkout repo"){
@@ -61,7 +62,20 @@ pipeline{
 					catchError(buildResult: 'SUCCESS' , message: 'ISSUE:: Coverage for lines does not meet global threshold (90%)' , stageResult: 'UNSTABLE'){
 							sh "npm run coverage"
 					}
-					
+			}
+		}
+
+		stage("Sonar security scan stage"){
+
+			steps{
+				sh """
+					${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+               			 -Dsonar.projectKey=hanumanflow_solar-system \
+               			 -Dsonar.organization=hanumanflow \
+                		 -Dsonar.sources=. \
+                		 -Dsonar.host.url=https://sonarcloud.io
+						 -Dsonar.login=0b85227e58a1466dbe9022b06f4d6441e2193b7d
+				"""
 			}
 		}
 	}
