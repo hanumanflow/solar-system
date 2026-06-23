@@ -77,9 +77,9 @@ pipeline{
 							sh "npm run coverage"
 					}
 					
-					archiveArtifacts "coverage/lcov-report/index.html"
+					// archiveArtifacts "coverage/lcov-report/index.html"
 					publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
-					reportFiles: 'index.html', reportName: 'Code-coverage-report.html', reportTitles: '', useWrapperFileDirectly: true])
+					reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
 
 				}
 			}
