@@ -68,4 +68,10 @@ pipeline{
 			}
 		}
 	}
+
+	post{
+		always{
+			echo "############### Pipeline executing completed ###############"
+		}
+	}
 }
