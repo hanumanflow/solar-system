@@ -68,15 +68,22 @@ pipeline{
 
 		stage("Sonar security scan stage"){
 
+			environment{
+				SONAR_SCANNER_OPTS = "-Xmx512m"
+				// NODE_OPTIONS = "--max-old-space-size=500"
+			}
+
 			steps{
 				sh """
 					${SONAR_SCANNER_HOME}/bin/sonar-scanner \
                			 -Dsonar.projectKey=hanumanflow_solar-system \
                			 -Dsonar.organization=hanumanflow \
-                		 -Dsonar.sources=. \
+                		 -Dsonar.sources=app.js \
                 		 -Dsonar.host.url=https://sonarcloud.io \
 						 -Dsonar.login=5463f33c30a324dc43ec7a3d4db9a533eb418eb1 \
-						 -Dsonar.exclusions=node_modules/**,coverage/**,dist/**
+						 -Dsonar.exclusions=node_modules/**,coverage/** \
+						 -Dsonar.javascript.node.maxspace=512
+
 				"""
 			}
 		}
