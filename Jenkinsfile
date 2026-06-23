@@ -53,25 +53,28 @@ pipeline{
 			steps{
 				script{					
 						sh "npm test"
-						junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)
-						archiveArtifacts "test-results.xml"
 				}
 			}
 		}
 		stage("Code coverage"){
 			steps{
-					catchError(buildResult: 'SUCCESS' , message: 'Coverage for lines (79.54%) does not meet global threshold (90%)' , stageResult: 'UNSTABLE'){
+					catchError(buildResult: 'SUCCESS' , message: 'ISSUE:: Coverage for lines does not meet global threshold (90%)' , stageResult: 'UNSTABLE'){
 							sh "npm run coverage"
 					}
-					publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
-					reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
+					
 			}
 		}
 	}
 
 	post{
 		always{
-			echo "############### Pipeline executing completed ###############"
+			echo "Executing post stage steps"
+			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
+			archiveArtifacts 'coverage/cobertura-coverage.xml'
+			archiveArtifacts "test-results.xml"
+			publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
+						reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
+
 		}
 	}
 }
