@@ -9,6 +9,7 @@ pipeline{
 		MONGO_USERNAME = credentials("mongo_username");
 		MONGO_PASSWORD = credentials("mongo_password");
 		SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
+		SONAR_TOKEN = '0b85227e58a1466dbe9022b06f4d6441e2193b7d'
 	}
 	stages{
 		stage("Checkout repo"){
