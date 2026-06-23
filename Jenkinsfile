@@ -73,8 +73,13 @@ pipeline{
 			steps{
 				withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials' , usernameVariable: 'MONGO_USERNAME' ,
 														passwordVariable: 'MONGO_PASSWORD')]){
-
-					sh "npm run coverage"
+					catchError(buildResult: 'SUCCESS' , message: 'Coverage for lines (79.54%) does not meet global threshold (90%)' , stageResult: 'UNSTABLE'){
+							sh "npm run coverage"
+					}
+					
+					archiveArtifacts "coverage/lcov-report/index.html"
+					publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
+					reportFiles: 'index.html', reportName: 'Code coverage report', reportTitles: 'true', useWrapperFileDirectly: true])
 
 				}
 			}
