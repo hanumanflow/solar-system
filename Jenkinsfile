@@ -88,6 +88,12 @@ pipeline{
 		// 		"""
 		// 	}
 		// }
+
+		stage("Docker image build"){
+			steps{
+				docker build -t solarSystem:latest .
+			}
+		}
 	}
 
 	post{
