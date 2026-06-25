@@ -98,7 +98,7 @@ pipeline{
 
 	post{
 		always{
-			echo "Executing post stage steps"
+			echo "POST steps -> after new volume"
 			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
 			archiveArtifacts 'coverage/cobertura-coverage.xml'
 			archiveArtifacts "test-results.xml"
