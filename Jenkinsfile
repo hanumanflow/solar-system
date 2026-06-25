@@ -91,7 +91,7 @@ pipeline{
 
 		stage("Docker image build stage"){
 			steps{
-				sh 'docker build -t solarSystem:latest .'
+				sh 'docker build -t solar-system:latest .'
 			}
 		}
 	}
