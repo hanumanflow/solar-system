@@ -82,7 +82,8 @@ pipeline{
         //         		 -Dsonar.host.url=https://sonarcloud.io \
 		// 				 -Dsonar.login=5463f33c30a324dc43ec7a3d4db9a533eb418eb1 \
 		// 				 -Dsonar.exclusions=node_modules/**,coverage/** \
-		// 				 -Dsonar.javascript.node.maxspace=512
+		// 				 -Dsonar.javascript.node.maxspace=512 \
+		 				//  -Dsonar.token=${SONAR_TOKEN} \
 
 		// 		"""
 		// 	}
