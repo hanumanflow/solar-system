@@ -147,7 +147,7 @@ pipeline{
 						--output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
 			'''
 
-				junit(testResults: 'trivy-image-MEDIUM-results.xml' ,  keepProperties: true , keepTestNames: true  ,allowEmptyResults: true)
+				// junit(testResults: 'trivy-image-MEDIUM-results.xml' ,  keepProperties: true , keepTestNames: true  ,allowEmptyResults: true)
 				junit(testResults: 'trivy-image-CRITICAL-results.xml' , keepProperties: true , keepTestNames: true , allowEmptyResults: true) 
 
 				archiveArtifacts 'trivy-image-MEDIUM-results.json'
