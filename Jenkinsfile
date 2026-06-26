@@ -116,41 +116,9 @@ pipeline{
 		}
 	}
 
+	
 	post{
 		always{
-			sh '''
-				trivy convert \
-				--format template --template "@/usr/local/share/trivy/templates/html.tpl" |
-				--output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
-
-				trivy convert \
-				--format template --template "@/usr/local/share/trivy/templates/html. tpl" \
-				--output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
-
-				trivy convert \
-				--format template --template "@/usr/local/share/trivy/templates/junit.tpl" |
-				--output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
-
-				trivy convert \
-				--format template --template "@/usr/local/share/trivy/templates/junit. tpl" |
-				--output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
-			'''
-		}
-	}
-
-	post{
-		always{
-			junit(testResults: 'trivy-image-MEDIUM-results.xml' ,  keepProperties: true , keepTestNames: true )
-			junit(testResults: 'trivy-image-CRITICAL-results.xml' , keepProperties: true , keepTestNames: true)
-			
-
-		}
-	}
-
-	post{
-		always{
-			// archiveArtifacts 'trivy-image-MEDIUM-results.json'
-			// archiveArtifacts 'trivy-image-CRITICAL-results.json'
 			// junit(testResults: '')
 			// echo "POST steps -> after new volume"
 			// junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
@@ -158,8 +126,32 @@ pipeline{
 			// archiveArtifacts "test-results.xml"
 			// publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
 					// reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
-			publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
-					 reportFiles: 'welcome.html', reportName: 'welcome', reportTitles: '', useWrapperFileDirectly: true])
+			// publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
+			// 		 reportFiles: 'welcome.html', reportName: 'welcome', reportTitles: '', useWrapperFileDirectly: true])
+
+					 sh '''
+						trivy convert \
+						--format template --template "@/usr/local/share/trivy/templates/html.tpl" |
+						--output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
+
+						trivy convert \
+						--format template --template "@/usr/local/share/trivy/templates/html. tpl" \
+						--output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+
+						trivy convert \
+						--format template --template "@/usr/local/share/trivy/templates/junit.tpl" |
+						--output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
+
+						trivy convert \
+						--format template --template "@/usr/local/share/trivy/templates/junit. tpl" |
+						--output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
+			'''
+
+				junit(testResults: 'trivy-image-MEDIUM-results.xml' ,  keepProperties: true , keepTestNames: true )
+				junit(testResults: 'trivy-image-CRITICAL-results.xml' , keepProperties: true , keepTestNames: true)
+
+				archiveArtifacts 'trivy-image-MEDIUM-results.json'
+				archiveArtifacts 'trivy-image-CRITICAL-results.json'
 		}
 	}
 	
