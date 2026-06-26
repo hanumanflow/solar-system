@@ -10,7 +10,7 @@ pipeline{
 		MONGO_PASSWORD = credentials("mongo_password");
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
-		DOCKER_IMAGE = 'solar-system:latest' 
+		DOCKER_IMAGE = 'chowdary2001/solar-system:latest' 
 	}
 	stages{
 		stage("Checkout repo"){
@@ -112,6 +112,15 @@ pipeline{
 					--quiet \
 					--format json -o trivy-image-CRITICAL-results.json
 				"""
+			}
+
+		}
+
+		stage("Push image to registry"){
+			steps{
+				withDockerRegistry(credentialsId: 'docker-credentials' , url:''){
+					sh "docker push $DOCKER_IMAGE"
+				}
 			}
 		}
 	}
