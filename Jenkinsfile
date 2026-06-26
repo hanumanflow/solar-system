@@ -152,6 +152,15 @@ pipeline{
 
 				archiveArtifacts 'trivy-image-MEDIUM-results.json'
 				archiveArtifacts 'trivy-image-CRITICAL-results.json'
+
+				publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
+					 reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'trivy-image-MEDIUM-results', reportTitles: ''])
+				
+				publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
+					 reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'trivy-image-CRITICAL-results.html', reportTitles: ''])
+
+				
+
 		}
 	}
 	
