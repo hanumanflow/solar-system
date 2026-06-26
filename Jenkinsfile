@@ -8,8 +8,8 @@ pipeline{
 		MONGO_URI=credentials("mongodb-url")
 		MONGO_USERNAME = credentials("mongo_username");
 		MONGO_PASSWORD = credentials("mongo_password");
-		SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
-		SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
+		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
+		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
 	}
 	stages{
 		stage("Checkout repo"){
@@ -98,13 +98,16 @@ pipeline{
 
 	post{
 		always{
-			echo "POST steps -> after new volume"
-			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
-			archiveArtifacts 'coverage/cobertura-coverage.xml'
-			archiveArtifacts "test-results.xml"
-			publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
-						reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
 
+			// echo "POST steps -> after new volume"
+			// junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
+			// archiveArtifacts 'coverage/cobertura-coverage.xml'
+			// archiveArtifacts "test-results.xml"
+			// publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
+					// reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
+			publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
+					 reportFiles: 'index.html', reportName: 'index', reportTitles: '', useWrapperFileDirectly: true])
+			
 		}
 	}
 }
