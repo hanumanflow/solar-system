@@ -10,6 +10,7 @@ pipeline{
 		MONGO_PASSWORD = credentials("mongo_password");
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
+		DOCKER_IMAGE = 'solar-system:latest' 
 	}
 	stages{
 		stage("Checkout repo"){
@@ -91,7 +92,7 @@ pipeline{
 
 		stage("Docker image build stage"){
 			steps{
-				sh 'docker build -t solar-system:latest .'
+				sh 'docker build -t $DOCKER_IMAGE .'
 			}
 		}
 	}
@@ -106,7 +107,7 @@ pipeline{
 			// publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
 					// reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
 			publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
-					 reportFiles: 'index.html', reportName: 'index', reportTitles: '', useWrapperFileDirectly: true])
+					 reportFiles: 'welcome.html', reportName: 'welcome', reportTitles: '', useWrapperFileDirectly: true])
 			
 		}
 	}
