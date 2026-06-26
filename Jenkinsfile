@@ -100,13 +100,13 @@ pipeline{
 				sh """
 
 					trivy image $DOCKER_IMAGE \
-					--severity LOW , MEDIUM \
+					--severity LOW,MEDIUM \
 					--exit-code 0 \
 					--quiet \
 					--format json -o trivy-image-MEDIUM-results.json
 
 					trivy image $DOCKER_IMAGE \
-					--severity HIGH, CRITICAL \
+					--severity HIGH,CRITICAL \
 					--exit-code 1 \
 					--quiet \
 					--format json -o trivy-image-CRITICAL-results.json
@@ -119,6 +119,7 @@ pipeline{
 		always{
 			archiveArtifacts 'trivy-image-MEDIUM-results.json'
 			archiveArtifacts 'trivy-image-CRITICAL-results.json'
+			// junit(testResults: '')
 			// echo "POST steps -> after new volume"
 			// junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
 			// archiveArtifacts 'coverage/cobertura-coverage.xml'
