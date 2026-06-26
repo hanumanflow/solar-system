@@ -104,8 +104,9 @@ pipeline{
 					--exit-code 0 \
 					--quiet \
 					--format json -o trivy-image-MEDIUM-results.json
-
-					trivy image $DOCKER_IMAGE \
+				"""
+				sh """
+				trivy image $DOCKER_IMAGE \
 					--severity HIGH,CRITICAL \
 					--exit-code 1 \
 					--quiet \
