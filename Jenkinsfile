@@ -95,11 +95,30 @@ pipeline{
 				sh 'docker build -t $DOCKER_IMAGE .'
 			}
 		}
+		stage("trivy image scan stage"){
+			steps{
+				sh """
+
+					trivy image $DOCKER_IMAGE \
+					-- severity LOW , MEDIUM \
+					-- exit-code 0 \
+					-- quiet \
+					-- format json -o trivy-image-MEDIUM-results.json
+
+					trivy image $DOCKER_IMAGE \
+					-- severity HIGH, CRITICAL \
+					-- exit-code 1 \
+					-- quiet \
+					-- format json -o trivy-image-CRITICAL-results.json
+				"""
+			}
+		}
 	}
 
 	post{
 		always{
-
+			archiveArtifacts 'trivy-image-MEDIUM-results.json'
+			archiveArtifacts 'trivy-image-CRITICAL-results.json'
 			// echo "POST steps -> after new volume"
 			// junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
 			// archiveArtifacts 'coverage/cobertura-coverage.xml'
