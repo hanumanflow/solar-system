@@ -100,16 +100,16 @@ pipeline{
 				sh """
 
 					trivy image $DOCKER_IMAGE \
-					-- severity LOW , MEDIUM \
-					-- exit-code 0 \
-					-- quiet \
-					-- format json -o trivy-image-MEDIUM-results.json
+					--severity LOW , MEDIUM \
+					--exit-code 0 \
+					--quiet \
+					--format json -o trivy-image-MEDIUM-results.json
 
 					trivy image $DOCKER_IMAGE \
-					-- severity HIGH, CRITICAL \
-					-- exit-code 1 \
-					-- quiet \
-					-- format json -o trivy-image-CRITICAL-results.json
+					--severity HIGH, CRITICAL \
+					--exit-code 1 \
+					--quiet \
+					--format json -o trivy-image-CRITICAL-results.json
 				"""
 			}
 		}
