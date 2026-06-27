@@ -55,13 +55,7 @@ pipeline{
 			}
 
 			steps{
-				script{	
-						sh '''
-							node -v
-							npm -v
-							npm list mocha
-							npm list mocha-junit-reporter
-						'''				
+				script{					
 						sh "npm test"
 				}
 			}
