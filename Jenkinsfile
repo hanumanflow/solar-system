@@ -51,7 +51,7 @@ pipeline{
 		stage("Testing stage"){
 
 			options{
-				retry(2)
+				retry(1)
 			}
 
 			steps{
