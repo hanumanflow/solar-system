@@ -77,7 +77,7 @@ app.get('/os',   function(req, res) {
 
 app.get('/live',   function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-    res.send({
+    res.status(500).send({
         "status": "live"
     });
 })
