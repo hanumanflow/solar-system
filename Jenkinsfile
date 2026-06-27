@@ -11,6 +11,7 @@ pipeline{
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
 		DOCKER_IMAGE = 'chowdary2001/solar-system:latest' 
+		DOCKER_CONTAINER = "solar-system-container"
 	}
 	stages{
 		stage("Checkout repo"){
@@ -120,6 +121,33 @@ pipeline{
 			steps{
 				withDockerRegistry(credentialsId: 'docker-credentials' , url:''){
 					sh "docker push $DOCKER_IMAGE"
+				}
+			}
+		}
+
+		stage("Deploy - AWS EC2"){
+			steps{
+				script{
+					sshagent(['aws-deploy-instance-key']){
+						sh '''
+							ssh  -o StrictHostKeyChecking=no ubuntu@172.31.34.250 "
+								
+								if sudo docker ps -a | grep -w "$DOCKER_CONTAINER" ; then
+									echo "Found $DOCKER_CONTAINER stopping and removing"
+									docker container stop "$DOCKER_CONTAINER" && docker rm "$DOCKER_CONTAINER"
+									echo "Starting the container"
+								fi
+								 docker run -d --name $DOCKER_CONTAINER \
+						               -p  3000:3000 \
+						               -e  MONGO_URI=$MONGO_URI \
+						               -e  MONGO_USERNAME=$MONGO_USERNAME \
+						               -e  MONGO_PASSWORD=$MONGO_PASSWORD \
+						               $DOCKER_IMAGE
+						        
+								docker ps
+							"
+						'''
+					}
 				}
 			}
 		}
