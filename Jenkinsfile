@@ -154,6 +154,21 @@ pipeline{
 				}
 			}
 		}
+
+		stage("Integration testing"){
+			when{
+				branch 'feature/*'
+			}
+			steps{
+				withAWS(credentials:'aws-creds' , region: 'ap-south-1'){
+					sh """
+						chmod +x integration-test.sh
+						bash integration-test.sh
+					""" 
+					
+				}
+			}
+		}
 	}
 
 	
