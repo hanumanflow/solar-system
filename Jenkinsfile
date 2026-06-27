@@ -138,7 +138,7 @@ pipeline{
 									echo "Starting the container"
 								fi
 								 docker run -d --name $DOCKER_CONTAINER \
-						               -p  3000:3000 \
+						               -p  3001:3000 \
 						               -e  MONGO_URI=$MONGO_URI \
 						               -e  MONGO_USERNAME=$MONGO_USERNAME \
 						               -e  MONGO_PASSWORD=$MONGO_PASSWORD \
