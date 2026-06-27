@@ -158,7 +158,7 @@ pipeline{
 		always{
 			// junit(testResults: '')
 			// echo "POST steps -> after new volume"
-			// junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
+			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)		
 			// archiveArtifacts 'coverage/cobertura-coverage.xml'
 			// archiveArtifacts "test-results.xml"
 			// publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
