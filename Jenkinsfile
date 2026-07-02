@@ -64,7 +64,7 @@ pipeline{
 
 		stage("Docker image build stage"){
 			steps{
-				sh 'docker build -t '$DOCKER_IMAGE:IMAGE_TAG' .'
+				sh 'docker build -t $DOCKER_IMAGE:IMAGE_TAG .'
 			}
 		}
 		stage("trivy image scan stage"){
