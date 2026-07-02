@@ -13,7 +13,7 @@ pipeline{
 		IMAGE_TAG = '1'
 		DOCKER_IMAGE = 'chowdary2001/solar-system' 
 		DOCKER_CONTAINER = "solar-system-container"
-		IMAGE_NAME = $DOCKER_IMAGE:$IMAGE_TAG
+		IMAGE_NAME = '$DOCKER_IMAGE:$IMAGE_TAG'
 	}
 	stages{
 		stage("Checkout repo"){
@@ -64,7 +64,7 @@ pipeline{
 
 		stage("Docker image build stage"){
 			steps{
-				sh 'docker build -t $IMAGE_NAME .'
+				sh 'docker build -t '$DOCKER_IMAGE:IMAGE_TAG' .'
 			}
 		}
 		stage("trivy image scan stage"){
