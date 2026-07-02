@@ -18,7 +18,7 @@ pipeline{
 	stages{
 		stage("Checkout repo"){
 			steps{
-				sh 'echo "Docker image name -> "$DOCKER_IMAGE:$IMAGE_TAG"'
+				sh 'echo "Docker image name -> $DOCKER_IMAGE:$IMAGE_TAG" '
 			   checkout scm
 			}
 		}
