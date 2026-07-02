@@ -64,21 +64,21 @@ pipeline{
 
 		stage("Docker image build stage"){
 			steps{
-				sh 'docker build -t $DOCKER_IMAGE:IMAGE_TAG .'
+				sh 'docker build -t $DOCKER_IMAGE:$IMAGE_TAG .'
 			}
 		}
 		stage("trivy image scan stage"){
 			steps{
 				sh """
 
-					trivy image $IMAGE_NAME \
+					trivy image $DOCKER_IMAGE:$IMAGE_TAG \
 					--severity LOW,MEDIUM,HIGH \
 					--exit-code 0 \
 					--quiet \
 					--format json -o trivy-image-MEDIUM-results.json
 				"""
 				sh """
-				trivy image $IMAGE_NAME \
+				trivy image $DOCKER_IMAGE:$IMAGE_TAG \
 					--severity CRITICAL \
 					--exit-code 1 \
 					--quiet \
@@ -91,7 +91,7 @@ pipeline{
 		stage("Push image to registry"){
 			steps{
 				withDockerRegistry(credentialsId: 'docker-credentials' , url:''){
-					sh "docker push $IMAGE_NAME"
+					sh "docker push $DOCKER_IMAGE:$IMAGE_TAG"
 				}
 			}
 		}
@@ -116,7 +116,7 @@ pipeline{
 						               -e  MONGO_URI=$MONGO_URI \
 						               -e  MONGO_USERNAME=$MONGO_USERNAME \
 						               -e  MONGO_PASSWORD=$MONGO_PASSWORD \
-						               $IMAGE_NAME
+						               $DOCKER_IMAGE:$IMAGE_TAG
 						        
 								docker ps
 							"
