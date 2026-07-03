@@ -153,7 +153,7 @@ pipeline{
 					sh """
 						set -e
 						git checkout main
-						git checkout -e feature-$BUILD_ID
+						git checkout -b feature-$BUILD_ID
 						yq -iy '.spec.template.spec.containers[0].image="$DOCKER_IMAGE:$IMAGE_TAG"' solar-deployment.yaml
 						cat solar-deployment.yaml
 						git add .
