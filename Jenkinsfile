@@ -213,7 +213,11 @@ pipeline{
 			// 	publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
 			// 		 reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'trivy-image-CRITICAL-results', reportTitles: ''])
 
-				
+			script{
+				if(fileExists('solar-system-gitops-argocd')){
+					rm -rf solar-system-gitops-argocd
+				}
+			}
 
 		}
 	}
