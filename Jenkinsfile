@@ -141,10 +141,34 @@ pipeline{
 			}
 		}
 
-		// stage("k8s update image tag stage"){
+		stage("k8s update image tag stage"){
 
+			when{
+				branch "PR*"
+			}
+			steps{
 
-		// }
+				sh 'git clone -b main https://github.com/hanumanflow/solar-system-gitops-argocd.git'
+
+				dir("solar-system-gitops-argocd/solar"){
+					sh """
+						set -e
+						git checkout main
+						git checkout -e feature-$BUILD_ID
+						yq -iy '.spec.template.spec.containers[0].image="$DOCKER_IMAGE:$IMAGE_TAG"' solar-deployment.yaml
+						cat solar-deployment.yaml
+						git add .
+						git commit -am "Updated docker image file to feature-$BUILD_ID"
+						git remote set-url origin https://$GIT_TOKEN@github.com/hanumanflow/solar-system-gitops-argocd.git
+						git push origin feature-$BUILD_ID
+						git status
+
+					"""
+				}
+
+			}
+
+		}
 	}
 
 	
