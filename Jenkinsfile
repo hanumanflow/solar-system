@@ -10,7 +10,7 @@ pipeline{
 		MONGO_PASSWORD = credentials("mongo_password");
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
-		IMAGE_TAG = '1'
+		IMAGE_TAG = '7'
 		DOCKER_IMAGE = 'chowdary2001/solar-system' 
 		DOCKER_CONTAINER = "solar-system-container"
 		GIT_TOKEN = credentials("github-token")
