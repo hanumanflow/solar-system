@@ -215,7 +215,7 @@ pipeline{
 
 			script{
 				if(fileExists('solar-system-gitops-argocd')){
-					rm -rf solar-system-gitops-argocd
+					sh "rm -rf solar-system-gitops-argocd"
 				}
 			}
 
