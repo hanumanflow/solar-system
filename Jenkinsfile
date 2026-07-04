@@ -10,7 +10,7 @@ pipeline{
 		MONGO_PASSWORD = credentials("mongo_password");
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
-		IMAGE_TAG = 'prod-deployment'
+		IMAGE_TAG = 'production'
 		DOCKER_IMAGE = 'chowdary2001/solar-system' 
 		DOCKER_CONTAINER = "solar-system-container"
 		GIT_TOKEN = credentials("github-token")
@@ -140,7 +140,7 @@ pipeline{
 			}
 		}
 
-		stage("k8s update image tag stage"){
+		stage("[PR] k8s update image tag stage"){
 
 			when{
 				branch "PR*"
@@ -169,7 +169,7 @@ pipeline{
 
 		}
 
-		stage("Raise PR on argocd repo"){
+		stage("[PR] Raise PR on argocd repo"){
 			when {
 				branch "PR*"
 			}
@@ -190,7 +190,7 @@ pipeline{
 			}
 		}
 
-		stage("Merge PR branch to main"){
+		stage("[PR] Merge PR branch to main"){
 			when{
 				branch "PR*"
 			}
@@ -202,7 +202,7 @@ pipeline{
 				}
 			}
 		}
-		stage("DAST - OWASP ZAP"){
+		stage("[PR] DAST - OWASP ZAP"){
 			when{
 				branch "PR*"
 			}
@@ -224,7 +224,7 @@ pipeline{
 			}
 		}
 
-		stage("Delete feature branch in gitops repo"){
+		stage("[PR] Delete feature branch in gitops repo"){
 			when{
 				branch "PR*"
 			}
@@ -238,8 +238,10 @@ pipeline{
 					}
 				}
 		}
-		stage("AWS S3 upload"){
-			
+		stage("[PR] AWS S3 upload"){
+			when{
+				branch "PR*"
+			}
 			steps{
 				withAWS(credentials: 'aws-creds' , region: 'ap-south-1'){
 					sh """
@@ -253,6 +255,19 @@ pipeline{
 					 		 bucket: "jenkins-reports-9900", 
 					 		 path: "jenkins-reports-$BUILD_ID")
 					sh "aws s3 ls jenkins-reports-9900"
+				}
+			}
+		}
+
+		stage("Deploy to prod"){
+			steps{
+				script{
+					timeout(time: 1 , unit: 'DAYS'){
+						input message: "Should this $DOCKER_IMAGE:$IMAGE_TAG deploy to prod?" ,
+							 ok: "YES, Deploy $DOCKER_IMAGE:$IMAGE_TAG to production",
+							 submitter: "satya"
+							
+					}
 				}
 			}
 		}
