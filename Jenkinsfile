@@ -10,7 +10,7 @@ pipeline{
 		MONGO_PASSWORD = credentials("mongo_password");
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
-		IMAGE_TAG = 'latest'
+		IMAGE_TAG = 'production'
 		DOCKER_IMAGE = 'chowdary2001/solar-system' 
 		DOCKER_CONTAINER = "solar-system-container"
 		GIT_TOKEN = credentials("github-token")
@@ -126,6 +126,9 @@ pipeline{
 			when{
 				branch 'feature/*'
 			}
+			options{
+				retry(2)
+			}
 			steps{
 				withAWS(credentials:'aws-creds' , region: 'ap-south-1'){
 					sh """
@@ -137,7 +140,7 @@ pipeline{
 			}
 		}
 
-		stage("k8s update image tag stage"){
+		stage("[PR] k8s update image tag stage"){
 
 			when{
 				branch "PR*"
@@ -154,7 +157,7 @@ pipeline{
 						yq -iy '.spec.template.spec.containers[0].image="$DOCKER_IMAGE:$IMAGE_TAG"' solar-deployment.yaml
 						cat solar-deployment.yaml
 						git add .
-						git commit -am "Updated docker image file to feature-$BUILD_ID"
+						git commit -am "Updated docker image file to $DOCKER_IMAGE:$IMAGE_TAG"
 						git remote set-url origin https://$GIT_TOKEN@github.com/hanumanflow/solar-system-gitops-argocd.git
 						git push origin feature-$BUILD_ID
 						git status
@@ -166,13 +169,14 @@ pipeline{
 
 		}
 
-		stage("Raise PR on argocd repo"){
+		stage("[PR] Raise PR on argocd repo"){
 			when {
 				branch "PR*"
 			}
 			steps{
 				sh """
-					curl -s -X POST \
+					curl -s -o /dev/null -w "Status code :: %{http_code}\n" \
+					-X POST \
 					-H "Accept: application/vnd.github+json" \
 					-H "Authorization: Bearer ${GIT_TOKEN}" \
 					https://api.github.com/repos/hanumanflow/solar-system-gitops-argocd/pulls \
@@ -181,12 +185,12 @@ pipeline{
 						"head":"feature-$BUILD_ID",
 						"base":"main",
 						"body":"The image tag is updated to $DOCKER_IMAGE:$IMAGE_TAG"
-					}'
+					}' 
 				"""
 			}
 		}
 
-		stage("Merge PR branch to main"){
+		stage("[PR] Merge PR branch to main"){
 			when{
 				branch "PR*"
 			}
@@ -198,7 +202,7 @@ pipeline{
 				}
 			}
 		}
-		stage("DAST - OWASP ZAP"){
+		stage("[PR] DAST - OWASP ZAP"){
 			when{
 				branch "PR*"
 			}
@@ -206,12 +210,13 @@ pipeline{
 				// sh """
 				// 	chmod 777 $(pwd)
 				// 	docker run -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
-				// 		-t http:// \
+				// 		-t http://<nginx-ingress-controller-url>/api-docs \
 				// 		-f openapi \
 				// 		-r zap_report.html \
 				// 		-w zap_report.md \
 				// 		-J zap_json_report.json \
-				// 		-x zap_xml_report.xml
+				// 		-x zap_xml_report.xml \
+				// 		-c zap_ignore_rules
 					
 
 				// """
@@ -219,19 +224,51 @@ pipeline{
 			}
 		}
 
-		stage("Delete feature branch in gitops repo"){
+		stage("[PR] Delete feature branch in gitops repo"){
 			when{
 				branch "PR*"
 			}
 			steps{
-				sh """
-					echo 'Deleting feature-$BUILD_ID branch from solar-system-gitops-argocd repo
-					sh 'git clone -b main https://github.com/hanumanflow/solar-system-gitops-argocd.git'
-					git checkout main
-					git remote set-url origin https://$GIT_TOKEN@github.com/hanumanflow/solar-system-gitops-argocd.git
-					git push origin --delete feature-$BUILD_ID
+				dir("solar-system-gitops-argocd"){
+						sh """
+							echo 'Deleting feature-$BUILD_ID branch from solar-system-gitops-argocd repo'
+							git remote set-url origin https://$GIT_TOKEN@github.com/hanumanflow/solar-system-gitops-argocd.git
+							git push origin --delete feature-$BUILD_ID
+						"""
+					}
+				}
+		}
+		stage("[PR] AWS S3 upload"){
+			when{
+				branch "PR*"
+			}
+			steps{
+				withAWS(credentials: 'aws-creds' , region: 'ap-south-1'){
+					sh """
+						pwd
+						mkdir reports-$BUILD_ID
+						cp trivy-image-* test-results.xml coverage/cobertura-coverage.xml reports-$BUILD_ID/
 
-				"""
+						#cp reports-$BUILD_ID s3://jenkins-reports-9900/reports-$BUILD_ID --recurssive
+					"""	
+					s3Upload(file: "reports-$BUILD_ID",
+					 		 bucket: "jenkins-reports-9900", 
+					 		 path: "jenkins-reports-$BUILD_ID")
+					sh "aws s3 ls jenkins-reports-9900"
+				}
+			}
+		}
+
+		stage("Deploy to prod"){
+			steps{
+				script{
+					timeout(time: 1 , unit: 'DAYS'){
+						input message: "Should this $DOCKER_IMAGE:$IMAGE_TAG deploy to prod?" ,
+							 ok: "YES, Deploy $DOCKER_IMAGE:$IMAGE_TAG to production",
+							 submitter: "satya"
+							
+					}
+				}
 			}
 		}
 	}
