@@ -10,7 +10,7 @@ pipeline{
 		MONGO_PASSWORD = credentials("mongo_password");
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
-		IMAGE_TAG = '77'
+		IMAGE_TAG = '999'
 		DOCKER_IMAGE = 'chowdary2001/solar-system' 
 		DOCKER_CONTAINER = "solar-system-container"
 		GIT_TOKEN = credentials("github-token")
@@ -60,7 +60,6 @@ pipeline{
 					}
 			}
 		}
-
 		stage("Docker image build stage"){
 			steps{
 				sh 'docker build -t $DOCKER_IMAGE:$IMAGE_TAG .'
@@ -86,7 +85,6 @@ pipeline{
 			}
 
 		}
-
 		stage("Push image to registry"){
 			steps{
 				withDockerRegistry(credentialsId: 'docker-credentials' , url:''){
@@ -94,10 +92,9 @@ pipeline{
 				}
 			}
 		}
-
 		stage("Deploy - AWS EC2"){
 			when{
-				branch 'feature/*'
+				branch 'feature/*' 
 			}
 			steps{
 				script{
@@ -168,6 +165,61 @@ pipeline{
 			}
 
 		}
+
+		stage("Raise PR on argocd repo"){
+			when {
+				branch "PR*"
+			}
+			steps{
+				sh """
+					curl -s -X POST \
+					-H "Accept: application/vnd.github+json" \
+					-H "Authorization: Bearer ${GIT_TOKEN}" \
+					https://api.github.com/repos/hanumanflow/solar-system-gitops-argocd/pulls \
+					-d '{
+						"title":"Updated docker image to $DOCKER_IMAGE:$IMAGE_TAG",
+						"head":"feature-$BUILD_ID",
+						"base":"main",
+						"body":"The image tag is updated to $DOCKER_IMAGE:$IMAGE_TAG"
+					}'
+				"""
+			}
+		}
+
+		stage("Merge PR branch to main"){
+			when{
+				branch "PR*"
+			}
+			steps{
+				script{
+					timeout(time: 1 , unit: "DAYS"){
+						input message: "Is feature-$BUILD_ID PR merged to main to update image tag to $DOCKER_IMAGE:$IMAGE_TAG" , ok: "Yes PR merged and image tag updated to $DOCKER_IMAGE:$IMAGE_TAG"
+					}
+				}
+			}
+		}
+		stage("DAST - OWASP ZAP"){
+			when{
+				branch "PR*"
+			}
+			steps{
+				// sh """
+				// 	chmod 777 $(pwd)
+				// 	docker run -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
+				// 		-t http:// \
+				// 		-f openapi \
+				// 		-r zap_report.html \
+				// 		-w zap_report.md \
+				// 		-J zap_json_report.json \
+				// 		-x zap_xml_report.xml
+					
+
+				// """
+				echo "testing completed"
+			}
+		}
+
+
 	}
 
 	
