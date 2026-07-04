@@ -235,6 +235,24 @@ pipeline{
 					}
 				}
 		}
+		stage("AWS S3 upload"){
+			
+			steps{
+				withAWS(credentials: 'aws-creds' , region: 'ap-south-1'){
+					sh """
+						pwd
+						mkdir reports-$BUILD_ID
+						cp trivy-image-* test-results.xml coverage/cobertura-coverage.xml reports-$BUILD_ID/
+
+						#cp reports-$BUILD_ID s3://jenkins-reports-9900/reports-$BUILD_ID --recurssive
+					"""	
+					s3Upload(file: "reports-$BUILD_ID",
+					 		 bucket: "jenkins-reports-9900", 
+					 		 path: "jenkins-reports-$BUILD_ID")
+					sh "aws s3 ls jenkins-reports-9900"
+				}
+			}
+		}
 	}
 
 	
