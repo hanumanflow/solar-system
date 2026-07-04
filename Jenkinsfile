@@ -219,7 +219,7 @@ pipeline{
 			}
 		}
 
-		stage("Delete branch - feature-$BUILD_ID"){
+		stage("Delete feature branch in gitops repo"){
 			when{
 				branch "PR*"
 			}
