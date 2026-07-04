@@ -10,7 +10,7 @@ pipeline{
 		MONGO_PASSWORD = credentials("mongo_password");
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
-		IMAGE_TAG = 'v3'
+		IMAGE_TAG = 'prod-deployment'
 		DOCKER_IMAGE = 'chowdary2001/solar-system' 
 		DOCKER_CONTAINER = "solar-system-container"
 		GIT_TOKEN = credentials("github-token")
@@ -172,7 +172,7 @@ pipeline{
 			}
 			steps{
 				sh """
-					curl -s -o /dev/null -w "%{http_code}\n" \
+					curl -s -o /dev/null -w "Status code :: %{http_code}\n" \
 					-X POST \
 					-H "Accept: application/vnd.github+json" \
 					-H "Authorization: Bearer ${GIT_TOKEN}" \
@@ -225,15 +225,14 @@ pipeline{
 				branch "PR*"
 			}
 			steps{
-				sh """
-					echo 'Deleting feature-$BUILD_ID branch from solar-system-gitops-argocd repo'
-					git clone -b main https://github.com/hanumanflow/solar-system-gitops-argocd.git
-					git checkout main
-					git remote set-url origin https://$GIT_TOKEN@github.com/hanumanflow/solar-system-gitops-argocd.git
-					git push origin --delete feature-$BUILD_ID
-
-				"""
-			}
+				dir("solar-system-gitops-argocd"){
+						sh """
+							echo 'Deleting feature-$BUILD_ID branch from solar-system-gitops-argocd repo'
+							git remote set-url origin https://$GIT_TOKEN@github.com/hanumanflow/solar-system-gitops-argocd.git
+							git push origin --delete feature-$BUILD_ID
+						"""
+					}
+				}
 		}
 	}
 
