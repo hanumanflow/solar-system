@@ -207,12 +207,13 @@ pipeline{
 				// sh """
 				// 	chmod 777 $(pwd)
 				// 	docker run -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
-				// 		-t http:// \
+				// 		-t http://<nginx-ingress-controller-url>/api-docs \
 				// 		-f openapi \
 				// 		-r zap_report.html \
 				// 		-w zap_report.md \
 				// 		-J zap_json_report.json \
-				// 		-x zap_xml_report.xml
+				// 		-x zap_xml_report.xml \
+				// 		-c zap_ignore_rules
 					
 
 				// """
