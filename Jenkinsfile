@@ -10,7 +10,7 @@ pipeline{
 		MONGO_PASSWORD = credentials("mongo_password");
 		// SONAR_SCANNER_HOME = tool 'sonarqube-scanner-81';
 		// SONAR_TOKEN = '5463f33c30a324dc43ec7a3d4db9a533eb418eb1'
-		IMAGE_TAG = 'hot-fix'
+		IMAGE_TAG = 'v3'
 		DOCKER_IMAGE = 'chowdary2001/solar-system' 
 		DOCKER_CONTAINER = "solar-system-container"
 		GIT_TOKEN = credentials("github-token")
@@ -154,7 +154,7 @@ pipeline{
 						yq -iy '.spec.template.spec.containers[0].image="$DOCKER_IMAGE:$IMAGE_TAG"' solar-deployment.yaml
 						cat solar-deployment.yaml
 						git add .
-						git commit -am "Updated docker image file to feature-$BUILD_ID"
+						git commit -am "Updated docker image file to $DOCKER_IMAGE:$IMAGE_TAG"
 						git remote set-url origin https://$GIT_TOKEN@github.com/hanumanflow/solar-system-gitops-argocd.git
 						git push origin feature-$BUILD_ID
 						git status
@@ -172,7 +172,8 @@ pipeline{
 			}
 			steps{
 				sh """
-					curl -s -X POST \
+					curl -s -o /dev/null -w "%{http_code}\n" \
+					-X POST \
 					-H "Accept: application/vnd.github+json" \
 					-H "Authorization: Bearer ${GIT_TOKEN}" \
 					https://api.github.com/repos/hanumanflow/solar-system-gitops-argocd/pulls \
@@ -181,7 +182,7 @@ pipeline{
 						"head":"feature-$BUILD_ID",
 						"base":"main",
 						"body":"The image tag is updated to $DOCKER_IMAGE:$IMAGE_TAG"
-					}'
+					}' 
 				"""
 			}
 		}
@@ -225,8 +226,8 @@ pipeline{
 			}
 			steps{
 				sh """
-					echo 'Deleting feature-$BUILD_ID branch from solar-system-gitops-argocd repo
-					sh 'git clone -b main https://github.com/hanumanflow/solar-system-gitops-argocd.git'
+					echo 'Deleting feature-$BUILD_ID branch from solar-system-gitops-argocd repo'
+					git clone -b main https://github.com/hanumanflow/solar-system-gitops-argocd.git
 					git checkout main
 					git remote set-url origin https://$GIT_TOKEN@github.com/hanumanflow/solar-system-gitops-argocd.git
 					git push origin --delete feature-$BUILD_ID
