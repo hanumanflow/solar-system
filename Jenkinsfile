@@ -260,6 +260,9 @@ pipeline{
 		}
 
 		stage("Deploy to prod"){
+			when{
+				branch "main"
+			}
 			steps{
 				script{
 					timeout(time: 1 , unit: 'DAYS'){
@@ -271,6 +274,7 @@ pipeline{
 				}
 			}
 		}
+		stage()
 	}
 
 	
