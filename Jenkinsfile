@@ -126,6 +126,9 @@ pipeline{
 			when{
 				branch 'feature/*'
 			}
+			options{
+				retry(2)
+			}
 			steps{
 				withAWS(credentials:'aws-creds' , region: 'ap-south-1'){
 					sh """
