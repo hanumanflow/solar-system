@@ -1,3 +1,8 @@
+
+// def slackNotificationMethod(String buildStatus = "STARTED"){
+// 	def 
+// }
+
 pipeline{
 	agent any
 
