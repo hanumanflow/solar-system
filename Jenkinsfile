@@ -1,7 +1,23 @@
 
-// def slackNotificationMethod(String buildStatus = "STARTED"){
-// 	def 
-// }
+def slackNotificationMethod(String buildStatus = "STARTED"){
+	
+	buildStatus = buildStatus ?: 'SUCCESS'
+	def color
+
+	if(buildStatus == 'SUCCESS'){
+		 color= "#57d713"
+	} 
+	else if(buildStatus == 'UNSTABLE')
+	{
+		color = "#ea791d"
+	}
+	else{
+		color = "#ce210a"
+	}
+
+	def message = "${buildStatus}:  ${env.JOB_NAME} - #${env.BUILD_NUMBER}: \n${env.BUILD_URL}"
+	slackSend(color: color , message: message)
+}
 
 pipeline{
 	agent any
@@ -331,6 +347,12 @@ pipeline{
 				}
 			}
 
+		}
+		success{
+			slackNotificationMethod("SUCCESS")
+		}
+		failure{
+			slackNotificationMethod("FAILURE")
 		}
 	}
 	
