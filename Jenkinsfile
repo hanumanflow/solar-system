@@ -40,6 +40,7 @@ pipeline{
 		stage("Checkout repo"){
 			steps{
 			   checkout scm
+			   sh "exit 1"
 			}
 		}
 		stage("Install dependencies"){
