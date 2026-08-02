@@ -71,7 +71,7 @@ pipeline{
 		stage("trivy image scan stage"){
 			steps{
 				script{
-					trivyScan.scan(imageName: "$DOCKER_IMAGE:$IMAGE_TAG" )
+					trivyScan.scan(imageName: "$DOCKER_IMAGE:$IMAGE_TAG" , build: "$JOB_NAME" )
 				}
 			}
 		}
