@@ -70,7 +70,9 @@ pipeline{
 		}
 		stage("trivy image scan stage"){
 			steps{
-				trivyScan.scan("$DOCKER_IMAGE:$IMAGE_TAG")
+				script{
+					trivyScan.scan("$DOCKER_IMAGE:$IMAGE_TAG")
+				}
 			}
 
 		// }
@@ -277,8 +279,10 @@ pipeline{
 			// publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', 
 					// reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
 			
-			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)	
-			trivyScan.reportsConvertor()
+			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)
+			script{	
+				trivyScan.reportsConvertor()
+			}
 			
 
 			// 	junit(testResults: 'trivy-image-MEDIUM-results.xml' ,  keepProperties: true , keepTestNames: true  ,allowEmptyResults: true)
