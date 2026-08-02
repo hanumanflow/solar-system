@@ -74,6 +74,7 @@ pipeline{
 					trivyScan.scan("$DOCKER_IMAGE:$IMAGE_TAG")
 				}
 			}
+		}
 
 		// }
 		// stage("Push image to registry"){
@@ -280,10 +281,11 @@ pipeline{
 					// reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
 			
 			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)
-			script{	
-				trivyScan.reportsConvertor()
-			}
-			
+
+				script{	
+					trivyScan.reportsConvertor()
+				}
+				
 
 			// 	junit(testResults: 'trivy-image-MEDIUM-results.xml' ,  keepProperties: true , keepTestNames: true  ,allowEmptyResults: true)
 			// 	junit(testResults: 'trivy-image-CRITICAL-results.xml' , keepProperties: true , keepTestNames: true , allowEmptyResults: true) 
