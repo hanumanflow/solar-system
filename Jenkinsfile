@@ -1,5 +1,5 @@
 
-@Library('hanumanflow-shared-libraries') _
+@Library('hanumanflow-shared-libraries@trivyScan') _
 
 pipeline{
 	agent any
@@ -68,24 +68,10 @@ pipeline{
 				sh 'docker build -t $DOCKER_IMAGE:$IMAGE_TAG .'
 			}
 		}
-		// stage("trivy image scan stage"){
-		// 	steps{
-		// 		sh """
-
-		// 			trivy image $DOCKER_IMAGE:$IMAGE_TAG \
-		// 			--severity LOW,MEDIUM,HIGH \
-		// 			--exit-code 0 \
-		// 			--quiet \
-		// 			--format json -o trivy-image-MEDIUM-results.json
-		// 		"""
-		// 		sh """
-		// 		trivy image $DOCKER_IMAGE:$IMAGE_TAG \
-		// 			--severity CRITICAL \
-		// 			--exit-code 0 \
-		// 			--quiet \
-		// 			--format json -o trivy-image-CRITICAL-results.json
-		// 		"""
-		// 	}
+		stage("trivy image scan stage"){
+			steps{
+				trivyScan.scan("$DOCKER_IMAGE:$IMAGE_TAG")
+			}
 
 		// }
 		// stage("Push image to registry"){
@@ -292,29 +278,14 @@ pipeline{
 					// reportFiles: 'index.html', reportName: 'Code-coverage-report', reportTitles: '', useWrapperFileDirectly: true])
 			
 			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)	
-			// 		 sh '''
-			// 			trivy convert \
-			// 			--format template --template "@/usr/local/share/trivy/templates/html.tpl" \
-			// 			--output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
-
-			// 			trivy convert \
-			// 			--format template --template "@/usr/local/share/trivy/templates/html.tpl" \
-			// 			--output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
-
-			// 			trivy convert \
-			// 			--format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
-			// 			--output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
-
-			// 			trivy convert \
-			// 			--format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
-			// 			--output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
-			// 		'''
+			trivyScan.reportsConvertor()
+			
 
 			// 	junit(testResults: 'trivy-image-MEDIUM-results.xml' ,  keepProperties: true , keepTestNames: true  ,allowEmptyResults: true)
 			// 	junit(testResults: 'trivy-image-CRITICAL-results.xml' , keepProperties: true , keepTestNames: true , allowEmptyResults: true) 
 
-			// 	archiveArtifacts 'trivy-image-MEDIUM-results.json'
-			// 	archiveArtifacts 'trivy-image-CRITICAL-results.json'
+				archiveArtifacts 'trivy-image-MEDIUM-results.json'
+				archiveArtifacts 'trivy-image-CRITICAL-results.json'
 
 			// 	publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
 			// 		 		reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'trivy-image-MEDIUM-results', reportTitles: ''])
@@ -322,11 +293,11 @@ pipeline{
 			// 	publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
 			// 		 reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'trivy-image-CRITICAL-results', reportTitles: ''])
 
-			script{
-				if(fileExists('solar-system-gitops-argocd')){
-					sh "rm -rf solar-system-gitops-argocd"
-				}
-			}
+			// script{
+			// 	if(fileExists('solar-system-gitops-argocd')){
+			// 		sh "rm -rf solar-system-gitops-argocd"
+			// 	}
+			// }
 
 		}
 		success{
