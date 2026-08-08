@@ -33,6 +33,7 @@ pipeline{
 
 			steps{
 				sh 'npm install --no-audit'
+				stash(includes: "node_modules/" , name: "solar-system-node-modules")
 			}
 		}
 		stage("Dependencies Scanning stage"){
@@ -64,7 +65,8 @@ pipeline{
 					stages{
 						stage("install dependencies"){
 							steps{
-							sh "npm install --no-audit"
+							// sh "npm install --no-audit"
+							unstash "solar-system-node-modules"
 							}
 						}
 						stage("testing"){
