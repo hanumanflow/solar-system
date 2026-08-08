@@ -26,20 +26,30 @@ pipeline{
 			}
 		}
 		stage("Install dependencies"){
+			agent any
 
 			options{
 				timestamps()
 			}
 
 			steps{
-				sh 'npm install --no-audit'
-				stash(includes: "node_modules/" , name: "solar-system-node-modules")
+				cache(maxCacheSize: 550, caches: [
+					arbitraryFileCache(
+						cacheName: 'npm-dependency-cache',
+						cacheValidityDecidingFile: 'package-lock.json',
+						includes: '**/*',
+						path: 'node_modules')
+					]){
+						sh 'npm install --no-audit'
+						stash(includes: "node_modules/" , name: "solar-system-node-modules")
+					}
 			}
 		}
 		stage("Dependencies Scanning stage"){
 			parallel {
 				stage("Dependencies Audit"){
 					steps{
+						unstash "solar-system-node-modules"
 						sh 'npm audit --audit-level=critical'
 					}
 				}
@@ -50,7 +60,8 @@ pipeline{
 				stage("Testing node-22"){
 					steps{
 						script{	
-							sh "node -v"				
+							sh "node -v"
+							unstash "solar-system-node-modules"			
 							sh "npm test"
 						}
 					}
@@ -84,6 +95,7 @@ pipeline{
 		stage("Code coverage"){
 			steps{
 					catchError(buildResult: 'SUCCESS' , message: 'ISSUE:: Coverage for lines does not meet global threshold (90%)' , stageResult: 'UNSTABLE'){
+							unstash "solar-system-node-modules"
 							sh "npm run coverage"
 					}
 			}
@@ -307,16 +319,16 @@ pipeline{
 			
 			junit(testResults: 'test-results.xml' , keepProperties: true , keepTestNames: true)
 
-				script{	
-					trivyScan.reportsConvertor()
-				}
-				
-
 			// 	junit(testResults: 'trivy-image-MEDIUM-results.xml' ,  keepProperties: true , keepTestNames: true  ,allowEmptyResults: true)
 			// 	junit(testResults: 'trivy-image-CRITICAL-results.xml' , keepProperties: true , keepTestNames: true , allowEmptyResults: true) 
 
 				archiveArtifacts 'trivy-image-MEDIUM-results.json'
 				archiveArtifacts 'trivy-image-CRITICAL-results.json'
+
+				script{	
+					trivyScan.reportsConvertor()
+				}
+				
 
 			// 	publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './' ,
 			// 		 		reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'trivy-image-MEDIUM-results', reportTitles: ''])
