@@ -44,18 +44,43 @@ pipeline{
 				}
 			}
 		}
-		stage("Testing stage"){
+		stage("Parallel testing"){
+			parallel{
+				stage("Testing node-22"){
+					steps{
+						script{	
+							sh "node -v"				
+							sh "npm test"
+						}
+				}
 
-			options{
-				retry(1)
-			}
+				stage("testing node-20"){
+					agent{
+						docker{
+							image "node:20-alpine"
+						}
+					}
+					stages{
+						stage("install dependencies"){
+							steps{
+							sh "npm install --no-audit"
+							}
+						}
+						stage("testing"){
+							steps{
+								sh "node -v"
+								sh "npm test"
+							}
+						}
 
-			steps{
-				script{					
-						sh "npm test"
+					}
 				}
 			}
+
+			}
+			
 		}
+		
 		stage("Code coverage"){
 			steps{
 					catchError(buildResult: 'SUCCESS' , message: 'ISSUE:: Coverage for lines does not meet global threshold (90%)' , stageResult: 'UNSTABLE'){
