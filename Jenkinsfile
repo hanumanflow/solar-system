@@ -52,6 +52,7 @@ pipeline{
 							sh "node -v"				
 							sh "npm test"
 						}
+					}
 				}
 
 				stage("testing node-20"){
@@ -76,11 +77,8 @@ pipeline{
 					}
 				}
 			}
-
-			}
-			
 		}
-		
+			
 		stage("Code coverage"){
 			steps{
 					catchError(buildResult: 'SUCCESS' , message: 'ISSUE:: Coverage for lines does not meet global threshold (90%)' , stageResult: 'UNSTABLE'){
