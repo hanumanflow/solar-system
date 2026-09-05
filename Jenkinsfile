@@ -55,7 +55,6 @@ pipeline{
 			parallel {
 				stage("Dependencies Audit"){
 					steps{
-						// unstash "solar-system-node-modules"
 						sh "pwd"
 						sh "ls -l"
 						sh 'npm audit --audit-level=critical'
@@ -70,8 +69,9 @@ pipeline{
 						script{	
 							sh "node -v"
 							sh "pwd"
-							// unstash "solar-system-node-modules"
-							sh "ls -l"			
+							unstash "solar-system-node-modules"
+							sh "ls -l"	
+
 							sh "npm test"
 						}
 					}
