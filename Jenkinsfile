@@ -85,11 +85,11 @@ pipeline{
 						stage("install dependencies"){
 							steps{
 							// sh "npm install --no-audit"
-								sh "Before stashing in ${hostname}"
+								sh "Before stashing "
 								sh "ls -l"
 							unstash "solar-system-node-modules"
 
-								sh "After stashing in ${hostname}"
+								sh "After stashing in"
 								sh "ls -l"
 							}
 						}
