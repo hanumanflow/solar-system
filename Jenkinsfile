@@ -33,6 +33,8 @@ pipeline{
 			}
 
 			steps{
+				sh "before checking cache"
+				sh "ls -l"
 				cache(maxCacheSize: 550, caches: [
 					arbitraryFileCache(
 						cacheName: 'npm-dependency-cache',
@@ -41,6 +43,7 @@ pipeline{
 						includes: '**/*'
 						)
 					]){
+						sh "ls -l"
 						sh 'npm install --no-audit'
 						stash(includes: "node_modules/" , name: "solar-system-node-modules")
 					}
@@ -51,6 +54,7 @@ pipeline{
 				stage("Dependencies Audit"){
 					steps{
 						// unstash "solar-system-node-modules"
+						sh "ls -l"
 						sh 'npm audit --audit-level=critical'
 					}
 				}
