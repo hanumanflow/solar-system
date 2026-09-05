@@ -22,6 +22,7 @@ pipeline{
 		stage("Checkout repo"){
 			steps{
 			   checkout scm
+			   sh "ls -l"
 			   
 			}
 		}
