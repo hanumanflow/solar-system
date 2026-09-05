@@ -33,7 +33,7 @@ pipeline{
 			}
 
 			steps{
-				sh "before checking cache"
+				echo "before checking cache"
 				sh "ls -l"
 				cache(maxCacheSize: 550, caches: [
 					arbitraryFileCache(
