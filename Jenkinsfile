@@ -21,6 +21,7 @@ pipeline{
 	stages{
 		stage("Checkout repo"){
 			steps{
+				deleteDir()
 			   checkout scm
 			   sh "ls -l"
 			   
