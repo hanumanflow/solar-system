@@ -68,7 +68,8 @@ pipeline{
 					steps{
 						script{	
 							sh "node -v"
-							unstash "solar-system-node-modules"			
+							// unstash "solar-system-node-modules"
+							sh "ls -l"			
 							sh "npm test"
 						}
 					}
@@ -84,7 +85,12 @@ pipeline{
 						stage("install dependencies"){
 							steps{
 							// sh "npm install --no-audit"
+								sh "Before stashing in ${hostname}"
+								sh "ls -l"
 							unstash "solar-system-node-modules"
+
+								sh "After stashing in ${hostname}"
+								sh "ls -l"
 							}
 						}
 						stage("testing"){
