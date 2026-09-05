@@ -56,6 +56,7 @@ pipeline{
 				stage("Dependencies Audit"){
 					steps{
 						// unstash "solar-system-node-modules"
+						sh "pwd"
 						sh "ls -l"
 						sh 'npm audit --audit-level=critical'
 					}
@@ -68,6 +69,7 @@ pipeline{
 					steps{
 						script{	
 							sh "node -v"
+							sh "pwd"
 							// unstash "solar-system-node-modules"
 							sh "ls -l"			
 							sh "npm test"
@@ -85,6 +87,7 @@ pipeline{
 						stage("install dependencies"){
 							steps{
 							// sh "npm install --no-audit"
+							 sh "pwd"
 								  sh "echo 'Before stashing' "
 								sh "ls -l"
 							unstash "solar-system-node-modules"
