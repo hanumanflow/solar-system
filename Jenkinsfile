@@ -37,8 +37,9 @@ pipeline{
 					arbitraryFileCache(
 						cacheName: 'npm-dependency-cache',
 						cacheValidityDecidingFile: 'package-lock.json',
-						includes: '**/*',
-						path: 'node_modules')
+						path: 'node_modules',
+						includes: '**/*'
+						)
 					]){
 						sh 'npm install --no-audit'
 						stash(includes: "node_modules/" , name: "solar-system-node-modules")
