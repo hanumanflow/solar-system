@@ -22,6 +22,7 @@ pipeline{
 		stage("Checkout repo"){
 			steps{
 				deleteDir()
+				echo "new jenkins-server"
 			   checkout scm
 			   sh "ls -l"
 			   
